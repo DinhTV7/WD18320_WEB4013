@@ -8,21 +8,26 @@ use Illuminate\Http\Request;
 
 class SanPhamController extends Controller
 {
-    public $san_phams;
+    // Sử dụng cho 2 cách Raw Query và Query Builder
+    // public $san_phams;
 
-    public function __construct()
-    {
-        $this->san_phams = new SanPham();   
-    }
+    // public function __construct()
+    // {
+    //     $this->san_phams = new SanPham();   
+    // }
 
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        // dd("Đây là index resource");
+        // Sử dụng cho 2 cách Raw Query và Query Builder
         // Lấy dữ liệu
-        $listSanPham = $this->san_phams->getList();
+        // $listSanPham = $this->san_phams->getList();
+
+        // Sử Eloquent
+        $listSanPham = SanPham::orderByDesc('id')->get();
+
         $title = "Danh sách sản phẩm";
         return view('admins.sanpham.index', compact('title', 'listSanPham'));
     }
