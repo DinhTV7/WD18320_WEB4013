@@ -6,41 +6,50 @@
 @endsection
 
 @section('css')
-  
 @endsection
 
 @section('content')
     <div class="card">
         <h4 class="card-header">{{ $title }}</h4>
-        <table class="table">
-            <thead>
-                <th>STT</th>
-                <th>Mã sản phẩm</th>
-                <th>Tên sản phẩm</th>
-                <th>Giá</th>
-                <th>Số lượng</th>
-                <th>Ngày nhập</th>
-                <th>Mô tả</th>
-                <th>Trạng thái</th>
-            </thead>
-            <tbody>
-                @foreach ($listSanPham as $index => $sanPham)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $sanPham->ma_san_pham }}</td>
-                        <td>{{ $sanPham->ten_san_pham }}</td>
-                        <td>{{ $sanPham->gia }}</td>
-                        <td>{{ $sanPham->so_luong }}</td>
-                        <td>{{ $sanPham->ngay_nhap }}</td>
-                        <td>{{ $sanPham->mo_ta }}</td>
-                        <td>{{ $sanPham->trang_thai == 1 ? 'Hiển thị' : 'Ẩn' }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+        <div class="card-body">
+            <a href="{{ route('sanpham.create') }}" class="btn btn-success">Thêm sản phẩm</a>
+            
+            {{-- Hiển thị thông báo --}}
+            @if (session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+            
+            <table class="table">
+                <thead>
+                    <th>STT</th>
+                    <th>Mã sản phẩm</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Ngày nhập</th>
+                    <th>Mô tả</th>
+                    <th>Trạng thái</th>
+                </thead>
+                <tbody>
+                    @foreach ($listSanPham as $index => $sanPham)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $sanPham->ma_san_pham }}</td>
+                            <td>{{ $sanPham->ten_san_pham }}</td>
+                            <td>{{ $sanPham->gia }}</td>
+                            <td>{{ $sanPham->so_luong }}</td>
+                            <td>{{ $sanPham->ngay_nhap }}</td>
+                            <td>{{ $sanPham->mo_ta }}</td>
+                            <td>{{ $sanPham->trang_thai == 1 ? 'Hiển thị' : 'Ẩn' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 @endsection
 
 @section('js')
-
 @endsection

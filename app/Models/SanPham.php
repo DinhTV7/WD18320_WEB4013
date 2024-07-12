@@ -18,14 +18,18 @@ class SanPham extends Model
     // }
 
     // Cách 2: Sử dụng Query Builder
-    // public function getList()
-    // {
-    //     $listSanPham = DB::table('san_phams')
-    //         ->orderByDesc('id')
-    //         ->get();
+    public function getList()
+    {
+        $listSanPham = DB::table('san_phams')
+            ->orderByDesc('id')
+            ->get();
 
-    //     return $listSanPham;
-    // }
+        return $listSanPham;
+    }
+
+    public function createProduct($datas) {
+        DB::table('san_phams')->insert($datas);
+    }
 
     // Cách 3: Sử dụng Eloquent
     protected $table = 'san_phams';

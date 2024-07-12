@@ -9,12 +9,12 @@ use Illuminate\Http\Request;
 class SanPhamController extends Controller
 {
     // Sử dụng cho 2 cách Raw Query và Query Builder
-    // public $san_phams;
+    public $san_phams;
 
-    // public function __construct()
-    // {
-    //     $this->san_phams = new SanPham();   
-    // }
+    public function __construct()
+    {
+        $this->san_phams = new SanPham();   
+    }
 
     /**
      * Display a listing of the resource.
@@ -37,7 +37,9 @@ class SanPhamController extends Controller
      */
     public function create()
     {
-        dd("Đây là create resource");
+        $title = "Thêm sản phẩm";
+
+        return view('admins.sanpham.create', compact('title'));
     }
 
     /**
@@ -45,7 +47,31 @@ class SanPhamController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Kiểm tra dữ liệu
+        // dd($request->post());
+
+        if ($request->isMethod('POST')) {
+            // Lấy ra dữ liệu
+            // Vì có trường '_token' do csrf sinh ra
+            // nên trước khi gửi dữ liệu ta cần loại bỏ _token
+            // Cách 1: 
+            // $params = $request->post();
+            // unset($params['_token']);
+
+            // Cách 2:
+            $params = $request->except('_token');
+
+            // Thêm dữ liệu
+            // Sử dụng Query Builder
+            // $this->san_phams->createProduct($params);
+
+            // Sử dụng Eloquent
+            SanPham::create($params);
+
+            // Sau khi thêm thành công sẽ quay trở về trang danh sách
+            // Và hiển thị thông báo
+            return redirect()->route('sanpham.index')->with('success', 'Thêm sản phẩm thành công!');
+        }
     }
 
     /**
