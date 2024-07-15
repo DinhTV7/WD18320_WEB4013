@@ -22,40 +22,40 @@
 
                 <div class="mb-3">
                     <label for="" class="form-label">Mã sản phẩm:</label>
-                    <input type="text" class="form-control" name="ma_san_pham" placeholder="Nhập mã sản phẩm">
+                    <input type="text" class="form-control" name="ma_san_pham" value="{{ $sanPham->ma_san_pham }}" placeholder="Nhập mã sản phẩm">
                 </div>
 
                 <div class="mb-3">
                     <label for="" class="form-label">Tên sản phẩm:</label>
-                    <input type="text" class="form-control" name="ten_san_pham" placeholder="Nhập tên sản phẩm">
+                    <input type="text" class="form-control" name="ten_san_pham" value="{{ $sanPham->ten_san_pham }}" placeholder="Nhập tên sản phẩm">
                 </div>
 
                 <div class="mb-3">
                     <label for="" class="form-label">Giá sản phẩm:</label>
-                    <input type="number" class="form-control" name="gia" min="1" placeholder="Nhập giá sản phẩm">
+                    <input type="number" class="form-control" name="gia" min="1" value="{{ $sanPham->gia }}" placeholder="Nhập giá sản phẩm">
                 </div>
 
                 <div class="mb-3">
                     <label for="" class="form-label">Số lượng:</label>
-                    <input type="text" class="form-control" name="so_luong" placeholder="Nhập số lượng sản phẩm">
+                    <input type="text" class="form-control" name="so_luong" value="{{ $sanPham->so_luong }}" placeholder="Nhập số lượng sản phẩm">
                 </div>
 
                 <div class="mb-3">
                     <label for="" class="form-label">Ngày nhập:</label>
-                    <input type="date" class="form-control" name="ngay_nhap">
+                    <input type="date" class="form-control" name="ngay_nhap" value="{{ $sanPham->ngay_nhap }}">
                 </div>
 
                 <div class="mb-3">
                     <label for="" class="form-label">Mô tả:</label>
-                    <textarea name="mo_ta" cols="30" rows="3" class="form-control" placeholder="Nhập mô tả sản phẩm"></textarea>
+                    <textarea name="mo_ta" cols="30" rows="3" class="form-control" placeholder="Nhập mô tả sản phẩm">{{ $sanPham->mo_ta }}</textarea>
                 </div>
 
                 <div class="mb-3">
                     <label for="" class="form-label">Trạng thái:</label>
                     <select name="trang_thai" class="form-select">
                         <option selected>Chọn trạng thái</option>
-                        <option value="0">Ẩn</option>
-                        <option value="1">Hiển thị</option>
+                        <option value="0" {{ $sanPham->trang_thai == '0' ? 'selected' : '' }}>Ẩn</option>
+                        <option value="1" {{ $sanPham->trang_thai == '1' ? 'selected' : '' }}>Hiển thị</option>
                     </select>
                 </div>
 
@@ -65,12 +65,12 @@
                         onchange="showImage(event)">
                 </div>
 
-                <img id="img_product" src="" alt="Hình ảnh sản phẩm" 
-                    style="width: 200px; display: none">
+                <img id="img_product" src="{{ Storage::url($sanPham->hinh_anh) }}" alt="Hình ảnh sản phẩm" 
+                    style="width: 200px">
 
                 <div class="mb-3 d-flex justify-content-center">
                     <button type="reset" class="btn btn-outline-secondary me-3">Nhập lại</button>
-                    <button type="submit" class="btn btn-success">Thêm mới</button>
+                    <button type="submit" class="btn btn-warning">Chỉnh sửa</button>
                 </div>
             </form>
         </div>

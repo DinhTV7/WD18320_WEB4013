@@ -31,10 +31,17 @@ class SanPham extends Model
         DB::table('san_phams')->insert($datas);
     }
 
+    public function getDetailProduct($id) {
+        $san_pham = DB::table('san_phams')->where('id', $id)->first();
+
+        return $san_pham;
+    }
+
     // Cách 3: Sử dụng Eloquent
     protected $table = 'san_phams';
 
     protected $fillable = [
+        'hinh_anh',
         'ma_san_pham',
         'ten_san_pham',
         'gia',
