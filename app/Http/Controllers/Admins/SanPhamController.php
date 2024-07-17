@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admins;
 
-use App\Http\Controllers\Controller;
 use App\Models\SanPham;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\SanPhamRequest;
+use Illuminate\Support\Facades\Storage;
 
 class SanPhamController extends Controller
 {
@@ -13,7 +15,7 @@ class SanPhamController extends Controller
 
     public function __construct()
     {
-        $this->san_phams = new SanPham();   
+        $this->san_phams = new SanPham();
     }
 
     /**
@@ -45,7 +47,7 @@ class SanPhamController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(SanPhamRequest $request)
     {
         // Kiểm tra dữ liệu
         // dd($request->post());
@@ -66,7 +68,7 @@ class SanPhamController extends Controller
                 $filename = $request->file('img_san_pham')->store('uploads/sanpham', 'public');
             } else {
                 $filename = null;
-            } 
+            }
 
             $params['hinh_anh'] = $filename;
 
@@ -115,9 +117,33 @@ class SanPhamController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(SanPhamRequest $request, string $id)
     {
-        //
+        if ($request->isMethod('PUT')) {
+            $params = $request->except('_token', '_method');
+
+            $sanPham = SanPham::findOrFail($id);
+
+            // Xử lý hình ảnh
+            if ($request->hasFile('img_san_pham')) {
+                // Nếu có đẩy hình ảnh thì xóa hình cũ và thêm hình mới
+                if ($sanPham->hinh_anh) {
+                    // Nếu sản phẩm có ảnh cũ thì mới tiến hành xóa
+                    Storage::disk('public')->delete($sanPham->hinh_anh);
+                }
+
+                $params['hinh_anh'] = $request->file('img_san_pham')->store('uploads/sanpham', 'public');
+            } else {
+                // Nếu ko có hình ảnh thì lấy lại hình ảnh cũ
+                $params['hinh_anh'] = $sanPham->hinh_anh;
+            }
+
+            // Cập nhật dữ liệu
+            // Eloquent
+            $sanPham->update($params);
+
+            return redirect()->route('sanpham.index')->with('success', 'Cập nhật sản phẩm thành công!');
+        }
     }
 
     /**
@@ -129,7 +155,8 @@ class SanPhamController extends Controller
     }
 
     // Viết một phương thức mới
-    public function test() {
+    public function test()
+    {
         dd("Đây là một hàm mới");
     }
 }
