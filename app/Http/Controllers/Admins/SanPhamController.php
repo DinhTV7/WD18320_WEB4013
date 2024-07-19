@@ -21,14 +21,26 @@ class SanPhamController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         // Sử dụng cho 2 cách Raw Query và Query Builder
         // Lấy dữ liệu
         // $listSanPham = $this->san_phams->getList();
 
+        // Lấy dữ liệu từ form tìm kiếm
+        $search = $request->input('search');
+        $searchTrangThai = $request->input('searchTrangThai');
+
         // Sử Eloquent
-        $listSanPham = SanPham::orderByDesc('id')->get();
+        $listSanPham = SanPham::query()
+            ->when($search, function ($query, $search) {
+                return $query->where('ma_san_pham', 'like', "%{$search}%")
+                    ->orWhere('ten_san_pham', 'like', "%{$search}%");
+            })
+            ->when($searchTrangThai !== null, function ($query) use ($searchTrangThai) {
+                return $query->where('trang_thai', '=', $searchTrangThai);
+            })
+            ->orderByDesc('id')->paginate(3);
 
         $title = "Danh sách sản phẩm";
         return view('admins.sanpham.index', compact('title', 'listSanPham'));
@@ -149,9 +161,44 @@ class SanPhamController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
-        //
+        if ($request->isMethod('DELETE')) {
+            // Sử dụng Query Builder
+            // Lấy thông tin về sản phẩm để nếu xòa thì xóa ảnh
+            // $sanPham = $this->san_phams->getDetailProduct($id);
+
+            // Sử dụng Eloquent
+            $sanPham = SanPham::findOrFail($id);
+
+            if ($sanPham) {
+                // Sử dụng Query Builder
+                // $this->san_phams->deleteProduct($id);
+
+                // Sử dụng Eloquent
+                $sanPham->delete();
+
+                // Xóa hình ảnh (Nếu xóa mềm thì không xóa hình ảnh)
+                // if ($sanPham->hinh_anh && Storage::disk('public')->exists($sanPham->hinh_anh)) {
+                //     Storage::disk('public')->delete($sanPham->hinh_anh);
+                // }
+
+                return redirect()->route('sanpham.index')->with('success', 'Xóa sản phẩm thành công!');
+            }
+
+            return redirect()->route('sanpham.index')->with('error', 'Không có sản phẩm!');
+        }
+
+        // Khi xóa mềm sẽ sử dụng eloquent (Xóa mềm thì không được xóa ảnh)
+        // Một số hàm cần nhớ khi làm việc với xóa mềm
+        // Hàm hiển thị toàn bộ các sản phẩm đã xóa mềm
+        // $listSanPhamDaXoa = SanPham::query()->onlyTrashed()->get();
+
+        // Hàm restore sản phẩm đã xóa
+        // $sanPham->restore();
+
+        // Hàm xóa vĩnh viễn sản phẩm đã xóa mềm (Khi làm chức năng này mới được xóa ảnh)
+        // $sanPham->forceDelete();
     }
 
     // Viết một phương thức mới

@@ -12,8 +12,21 @@
     <div class="card">
         <h4 class="card-header">{{ $title }}</h4>
         <div class="card-body">
-            <a href="{{ route('sanpham.create') }}" class="btn btn-success">Thêm sản phẩm</a>
-            
+            <div class="d-flex justify-content-between">
+                <a href="{{ route('sanpham.create') }}" class="btn btn-success">Thêm sản phẩm</a>
+                <form action="{{ route('sanpham.index') }}" method="GET">
+                    <div class="input-group">
+                        <select name="searchTrangThai" class="form-select">
+                            <option value="" selected>Chọn trạng thái</option>
+                            <option value="1" {{ request('searchTrangThai') == '1' ? 'selected' : '' }}>Hiển thị</option>
+                            <option value="0" {{ request('searchTrangThai') == '0' ? 'selected' : '' }}>Ẩn</option>
+                        </select>
+                        <input type="text" name="search" class="form-control"
+                            value="{{ request('search') }}" placeholder="Tìm kiếm.....">
+                        <button type="submit" class="btn btn-secondary">Tìm kiếm</button>
+                    </div>
+                </form>
+            </div>
             {{-- Hiển thị thông báo --}}
             @if (session('success'))
                 <div class="alert alert-success">
@@ -56,11 +69,19 @@
                             <td>{{ $sanPham->trang_thai == 1 ? 'Hiển thị' : 'Ẩn' }}</td>
                             <td>
                                 <a href="{{ route('sanpham.edit', $sanPham->id) }}" class="btn btn-warning">Sửa</a>
+                                <form action="{{ route('sanpham.destroy', $sanPham->id) }}" 
+                                    class="d-inline" method="POST" onsubmit="return confirm('Bạn có đồng ý xóa không?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger">Xóa</button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
+            {{-- Hiển thị phân trang --}}
+            {{ $listSanPham->links('pagination::bootstrap-5') }}
         </div>
     </div>
 @endsection
