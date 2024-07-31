@@ -14,13 +14,13 @@ class SanPhamResorce extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // return parent::toArray($request);
+        return parent::toArray($request);
 
         // Cấu hình dữ liệu trả về
-        return [
-            'san_pham_id' => $this->id,
-            'name_san_pham' => $this->ten_san_pham,
-            'price' => $this->gia,
-        ];
+        // return [
+        //     'san_pham_id' => $this->id,
+        //     'name_san_pham' => $this->ten_san_pham,
+        //     'price' => $this->gia,
+        // ];
     }
 }

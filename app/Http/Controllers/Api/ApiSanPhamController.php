@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\SanPhamResorce;
 use App\Models\SanPham;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\SanPhamResorce;
+use Illuminate\Support\Facades\Storage;
 
 class ApiSanPhamController extends Controller
 {
@@ -33,7 +34,21 @@ class ApiSanPhamController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if ($request->isMethod('POST')) {
+            $params = $request->all();
+
+            if ($request->hasFile('hinh_anh')) {
+                $filename = $request->file('hinh_anh')->store('uploads/sanpham', 'public');
+            } else {
+                $filename = null;
+            }
+
+            $params['hinh_anh'] = $filename;
+
+            $sanPham = SanPham::create($params);
+
+            return new SanPhamResorce($sanPham);
+        }
     }
 
     /**
@@ -50,7 +65,21 @@ class ApiSanPhamController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        if ($request->isMethod('PUT')) {
+            $params = $request->all();
+            $sanPham = SanPham::findOrFail($id);
+            if ($request->hasFile('hinh_anh')) {
+                if ($sanPham->hinh_anh) {
+                    Storage::disk('public')->delete($sanPham->hinh_anh);
+                }
+
+                $params['hinh_anh'] = $request->file('hinh_anh')->store('uploads/sanpham', 'public');
+            } else {
+                $params['hinh_anh'] = $sanPham->hinh_anh;
+            }
+            $sanPham->update($params);
+            return new SanPhamResorce($sanPham);
+        }
     }
 
     /**
@@ -58,6 +87,20 @@ class ApiSanPhamController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $sanPham = SanPham::findOrFail($id);
+
+        $sanPham->delete();
+
+        // Xóa hình ảnh (Nếu xóa mềm thì không xóa hình ảnh)
+        // if ($sanPham->hinh_anh && Storage::disk('public')->exists($sanPham->hinh_anh)) {
+        //     Storage::disk('public')->delete($sanPham->hinh_anh);
+        // }
+
+        return response()->json(
+            [
+                'message' => 'Xóa sản phẩm thành công'
+            ],
+            200
+        );
     }
 }
